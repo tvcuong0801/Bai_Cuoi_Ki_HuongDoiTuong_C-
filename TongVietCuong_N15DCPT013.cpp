@@ -47,13 +47,13 @@ class Image : Matrix
 			ifs.open(filename, ios_base::in);
 			if (ifs.fail()==true) cout<<"Failed!"<<endl;
 			ifs.getline(buffer, 1000, '\n');
+			
 			if(buffer[0] != 'P' || buffer[1] != '2')
 			{
 				cout << "Invalid Format!";
 				ifs.close();
 				return;
 			}
-			
 			
 			do
 			{
@@ -96,8 +96,7 @@ class Image : Matrix
 		if (x==3) ofs.open("result_histogram.pgm", ios_base::out);
 		if (x==4) ofs.open("result_smoothing.pgm", ios_base::out);
 		if (x==5) ofs.open("result_laplacian.pgm", ios_base::out);
-		if (ofs.fail()==true)
-			cout<<"Failed!"<<endl;
+		if (ofs.fail()==true) cout<<"Failed!"<<endl;
 		ofs << "P2" << endl;
 		ofs << "# result.pgm" << endl;
 		ofs << width << " " << height << endl;
@@ -156,7 +155,7 @@ class Filter : Matrix
 		}
 		
 		
-		void negative(Image&image)
+		void negative(Image&image) // bang muc xam cao nhat tru cho pixel o diem do
 		{
 			int i, j, width, height, gray;
 			width = image.get_Width();
@@ -168,13 +167,12 @@ class Filter : Matrix
 				for(j = 0; j < width; ++j)
 				{
 					matrix[i][j] = gray - matrix[i][j];
-					//cout<< matrix[i][j];
 				}
 			}
 		}
 		
 		
-		void logarite(Image&image)
+		void logarite(Image&image) // 
 		{
 		int i, j, width, height, gray;
 		width = image.get_Width();
@@ -187,7 +185,6 @@ class Filter : Matrix
 			for(j = 0; j < width; ++j)
 			{
 				matrix[i][j] = round(C*log( 1 + matrix[i][j]));
-				//cout<< matrix[i][j];
 			}
 		}
 		}
@@ -202,16 +199,20 @@ class Filter : Matrix
 		int **matrix = image.get_Pixels();
 		int sumpixel;
 		float p[256] = {0};
+		
 		for(i = 0; i < height; ++i)
 			for(j = 0; j < width; ++j)
 				++p[matrix[i][j]];
+				
 		sumpixel = width * height;
+		
 		for(i = 0; i < gray+1; ++i)
 		{
 			p[i] = p[i]*1.0/sumpixel;
 			if(i != 0)
 				p[i] += p[i-1];
 		}
+		
 		for(i = 0; i < height; ++i)
 			for(j = 0; j < width; ++j)
 				matrix[i][j] = round(p[matrix[i][j]] * gray);
@@ -232,16 +233,16 @@ class Filter : Matrix
 			for(i = 0; i < h; ++i)
 			{
 				j = 0;
-				pixels[i+1][j] = matrix[i][j];		//j = 0
+				pixels[i+1][j] = matrix[i][j];		//j = 0 canh ben trai
 				for(; j < w; ++j)
 				{
-					pixels[i+1][j+1] = matrix[i][j];
+					pixels[i+1][j+1] = matrix[i][j]; // matrix
 					if(i == 0)
-						pixels[i][j+1] = matrix[i][j];
+						pixels[i][j+1] = matrix[i][j]; // canh tren
 					else if(i == h - 1)
-						pixels[i+2][j+1] = matrix[i][j];
+						pixels[i+2][j+1] = matrix[i][j]; // canh duoi
 				}
-				pixels[i+1][j+1] = matrix[i][j-1]; //j = w
+				pixels[i+1][j+1] = matrix[i][j-1]; //j = w canh phai
 			}
 			pixels[0][0] = matrix[0][0];
 			pixels[0][width - 1] = matrix[0][w - 1];		
@@ -303,7 +304,7 @@ class Filter : Matrix
 					if(matrix[i-1][j-1] < 0)
 						matrix[i-1][j-1] = pixels[i][j] - matrix[i-1][j-1];
 					else
-						matrix[i-1][j-1] += pixels[i][j];
+						matrix[i-1][j-1] = pixels[i][j] + matrix[i-1][j-1];	
 				}
 		}
 };
@@ -333,6 +334,8 @@ int main()
 				case 1: 
 				{
 					system ("cls");
+					cout << endl;
+					cout << "\t CHOOSE IMAGE                                 " << endl;
 					cout << "\t1. mona_lisa.ascii.pgm                        " << endl;
 			        cout << "\t2. balloons.ascii.pgm                         " << endl;
 			        cout << "\t3. feep.ascii.pgm                             " << endl;
@@ -344,23 +347,23 @@ int main()
 			        switch(x)
 							{
 								case 1:
-									filename = "mona_lisa.ascii.pgm";
+									filename = {"mona_lisa.ascii.pgm"};
 									image.set_Image(filename);
 									break;
 								case 2:
-									filename = "balloons.ascii.pgm";
+									filename = {"balloons.ascii.pgm"};
 									image.set_Image(filename);
 									break;
 								case 3:
-									filename = "feep.ascii.pgm";
+									filename = {"feep.ascii.pgm"};
 									image.set_Image(filename);
 									break;
 								case 4:
-									filename = "glassware_noisy.ascii.pgm";
+									filename = {"glassware_noisy.ascii.pgm"};
 									image.set_Image(filename);
 									break;
 								case 5:
-									filename = "apollonian_gasket.ascii.pgm";
+									filename = {"apollonian_gasket.ascii.pgm"};
 									image.set_Image(filename);
 									break;
 								case 6:
@@ -376,10 +379,14 @@ int main()
 					if(image.get_GrayLevel() == 0)
 					{
 						cout << "\t=======================" << endl;
+						cout << endl << endl;
 						cout << "\tChoose image first!!!" << endl;
-						system("pause");
+						cout << endl << endl;
 						break;
 					}
+					system ("cls");
+					cout << endl << endl;
+					cout << "\t Saved!!!" << endl << endl;
 					filter.negative(image);
 					image.out_file(1);
 					break;
@@ -389,10 +396,14 @@ int main()
 					if(image.get_GrayLevel() == 0)
 					{
 						cout << "\t=======================" << endl;
+						cout << endl << endl;
 						cout << "\tChoose image first!!!" << endl;
-						system("pause");
+						cout << endl << endl;
 						break;
 					}
+					system ("cls");
+					cout << endl << endl;
+					cout << "\t Saved!!!" << endl << endl;
 					filter.logarite(image);
 					image.out_file(2);
 					break;
@@ -402,10 +413,14 @@ int main()
                 	if(image.get_GrayLevel() == 0)
 					{
 						cout << "\t=======================" << endl;
+						cout << endl << endl;
 						cout << "\tChoose image first!!!" << endl;
-						system("pause");
+						cout << endl << endl;
 						break;
 					}
+					system ("cls");
+					cout << endl << endl;
+					cout << "\t Saved!!!" << endl << endl;
 					filter.Histogram(image);
 					image.out_file(3);
 					break;
@@ -415,10 +430,14 @@ int main()
 					if(image.get_GrayLevel() == 0)
 					{
 						cout << "\t=======================" << endl;
+						cout << endl << endl;
 						cout << "\tChoose image first!!!" << endl;
-						system("pause");
+						cout << endl << endl;
 						break;
 					}
+					system ("cls");
+					cout << endl << endl;
+					cout << "\t Saved!!!" << endl << endl;
 					filter.smooth(image);
 					image.out_file(4);
 					break;
@@ -428,10 +447,14 @@ int main()
 					if(image.get_GrayLevel() == 0)
 					{
 						cout << "\t=======================" << endl;
+						cout << endl << endl;
 						cout << "\tChoose image first!!!" << endl;
-						system("pause");
+						cout << endl << endl;
 						break;
 					}
+					system ("cls");
+					cout << endl << endl;
+					cout << "\t Saved!!!" << endl << endl;
 					filter.laplacian(image);
 					image.out_file(5);
 					break;
@@ -446,7 +469,7 @@ int main()
                     cout << "\tERROR!!!!" << endl;
             }
     char c;
-    cout << "\tcontinue? (y/n)";
+    cout << "\tContinue? (y/n)";
     cin >> c;
     if (c=='y') goto next;
 	    
