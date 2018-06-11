@@ -253,7 +253,7 @@ class Filter : Matrix
 					matrix[i-1][j-1] = (pixels[i][j] + pixels[i-1][j] + pixels[i+1][j] + pixels[i][j-1] + pixels[i][j+1] + pixels[i+1][j+1] + pixels[i-1][j+1] + pixels[i-1][j-1] + pixels[i+1][j-1])/9;
 		}
 		
-		void laplacian(Image &pic)
+		void laplacian(Image &pic, int t)
 		{
 			int i, j, w, h, g;
 			int filter[3][3];
@@ -285,6 +285,8 @@ class Filter : Matrix
 			pixels[height - 1][0] = matrix[h - 1][0];
 			pixels[height - 1][width - 1] = matrix[h - 1][w - 1];
 			
+			if (t==1)
+			{
 			filter[0][0] =  0;
 			filter[0][2] =  0;
 			filter[2][0] =  0;
@@ -294,6 +296,46 @@ class Filter : Matrix
 			filter[1][2] = -1;	
 			filter[2][1] = -1;
 			filter[1][1] =  4;
+			}
+			
+			if (t==2)
+			{
+			filter[0][0] =  0;
+			filter[0][2] =  0;
+			filter[2][0] =  0;
+			filter[2][2] =  0;
+			filter[0][1] =  1;	
+			filter[1][0] =  1;	
+			filter[1][2] =  1;	
+			filter[2][1] =  1;
+			filter[1][1] = -4;
+			}
+ 
+			if (t==3)
+			{
+			filter[0][0] =  1;
+			filter[0][2] =  1;
+			filter[2][0] =  1;
+			filter[2][2] =  1;
+			filter[0][1] =  1;	
+			filter[1][0] =  1;	
+			filter[1][2] =  1;	
+			filter[2][1] =  1;
+			filter[1][1] = -8;
+			}
+			
+			if (t==4)
+			{
+			filter[0][0] = -1;
+			filter[0][2] = -1;
+			filter[2][0] = -1;
+			filter[2][2] = -1;
+			filter[0][1] = -1;	
+			filter[1][0] = -1;	
+			filter[1][2] = -1;	
+			filter[2][1] = -1;
+			filter[1][1] =  8;
+			}
 			
 			for(i = 1; i < height - 1; ++i)
 				for(j = 1; j < width - 1; ++j)
@@ -444,6 +486,7 @@ int main()
 				}
 				case 6: 
 				{
+					int g;
 					if(image.get_GrayLevel() == 0)
 					{
 						cout << "\t=======================" << endl;
@@ -452,11 +495,50 @@ int main()
 						cout << endl << endl;
 						break;
 					}
-					system ("cls");
-					cout << endl << endl;
-					cout << "\t Saved!!!" << endl << endl;
-					filter.laplacian(image);
-					image.out_file(5);
+					system("cls");
+					cout << endl;
+					cout << "\t1. Matrix 1                " << endl;
+			        cout << "\t2. Matrix 2                " << endl;
+			        cout << "\t3. Matrix 3                " << endl;
+			        cout << "\t4. Matrix 4                " << endl;
+			        cout << "\t5. End                     " << endl;
+			        cout << "\t Choose: "; 
+			        cin >> g;
+			        switch(x)
+			        		{
+								case 1:
+									system ("cls");
+									cout << endl << endl;
+									cout << "\t Saved!!!" << endl << endl;
+									filter.laplacian(image,1);
+									image.out_file(5);
+									break;
+								case 2:
+									system ("cls");
+									cout << endl << endl;
+									cout << "\t Saved!!!" << endl << endl;
+									filter.laplacian(image,2);
+									image.out_file(5);
+									break;
+								case 3:
+									system ("cls");
+									cout << endl << endl;
+									cout << "\t Saved!!!" << endl << endl;
+									filter.laplacian(image,3);
+									image.out_file(5);
+									break;
+								case 4:
+									system ("cls");
+									cout << endl << endl;
+									cout << "\t Saved!!!" << endl << endl;
+									filter.laplacian(image,4);
+									image.out_file(5);
+									break;
+								case 5:
+									break;
+								default:
+									cout << "\tERROR!!!!" << endl;
+				}
 					break;
 				}
 				case 0:
